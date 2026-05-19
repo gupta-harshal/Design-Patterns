@@ -41,7 +41,3 @@ SOLID is an acronym for five foundational guidelines that make software designs 
 * **KISS (Keep It Simple, Stupid):** Systems work best if they are kept simple rather than made complex. Patterns should only be introduced when real architectural constraints require them, avoiding over-engineering.
 * **YAGNI (You Aren't Gonna Need It):** Never implement a feature or structural layer until it is absolutely necessary. We write lightweight, focused patterns targeted directly at current domain requirements.
 
----
-
-
-        └── 📁 Factory-Method/    # Pure GoF Pattern (Double-Layered, OCP compliant)
