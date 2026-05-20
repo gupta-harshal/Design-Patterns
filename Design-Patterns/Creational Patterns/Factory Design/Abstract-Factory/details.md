@@ -23,24 +23,24 @@ graph TD
     WindowsFactory["WindowsFactory"]:::concrete
     MacFactory["MacFactory"]:::concrete
     
-    UIFactory <|.. WindowsFactory
-    UIFactory <|.. MacFactory
+    UIFactory --> WindowsFactory
+    UIFactory --> MacFactory
 
     %% Button Hierarchy
     Button["&laquo;interface&raquo;<br>Button"]:::interface
     WindowsButton["WindowsButton"]:::concrete
     MacButton["MacButton"]:::concrete
     
-    Button <|.. WindowsButton
-    Button <|.. MacButton
+    Button --> WindowsButton
+    Button --> MacButton
 
     %% Checkbox Hierarchy
     Checkbox["&laquo;interface&raquo;<br>Checkbox"]:::interface
     WindowsCheckbox["WindowsCheckbox"]:::concrete
     MacCheckbox["MacCheckbox"]:::concrete
     
-    Checkbox <|.. WindowsCheckbox
-    Checkbox <|.. MacCheckbox
+    Checkbox --> WindowsCheckbox
+    Checkbox --> MacCheckbox
 
     %% Client Relationship
     Application["Application"]:::client
@@ -51,7 +51,7 @@ graph TD
     Application --> Button
     Application --> Checkbox
     
-    WindowsFactory -.->|creates| WindowsButton
-    WindowsFactory -.->|creates| WindowsCheckbox
-    MacFactory -.->|creates| MacButton
-    MacFactory -.->|creates| MacCheckbox
+    WindowsFactory -.-> WindowsButton
+    WindowsFactory -.-> WindowsCheckbox
+    MacFactory -.-> MacButton
+    MacFactory -.-> MacCheckbox
