@@ -6,7 +6,7 @@ A clean, production-grade implementation of the **Builder Creational Design Patt
 
 ## 📐 Architectural Class Diagram
 
-The relationship between the complex target product (`User`) and its nested static utility configuration layer (`UserBuilder`) is defined below. 
+The relationship between the complex target product (`User`) and its nested static utility configuration layer (`UserBuilder`) is defined below.
 
 ```mermaid
 classDiagram
@@ -39,5 +39,4 @@ classDiagram
         +build() User
     }
 
-    User +-- UserBuilder : Nested Static Class
-    UserBuilder ..> User : Instantiates & Assembles
+    UserBuilder --> User : Instantiates & Assembles
