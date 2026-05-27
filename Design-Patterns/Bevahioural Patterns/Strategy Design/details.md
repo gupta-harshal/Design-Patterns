@@ -10,7 +10,7 @@ This project illustrates how to decouple a core application context from a famil
 
 Instead of bundling multiple travel mode logics inside a single class, this system breaks down each algorithm into its own isolated strategy class. The core client application (`Navigator`) maintains a reference to the generic strategy interface and delegates work to it dynamically at runtime.
 
-### System Class Diagram (Mermaid)
+### System Class Diagram 
 
 ```mermaid
 classDiagram
