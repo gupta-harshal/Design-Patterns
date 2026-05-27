@@ -7,28 +7,28 @@ interface RouteStrategy {
 class DrivingStrategy implements RouteStrategy {
     @Override
     public void buildRoute(String start, String end) {
-        System.out.println("🚗 Driving: Found fastest route from " + start + " to " + end + " via highways factoring in real-time traffic.");
+        System.out.println(" Driving: Found fastest route from " + start + " to " + end + " via highways factoring in real-time traffic.");
     }
 }
 
 class WalkingStrategy implements RouteStrategy {
     @Override
     public void buildRoute(String start, String end) {
-        System.out.println("🚶 Walking: Found shortest pedestrian path from " + start + " to " + end + " utilizing sidewalks and crosswalks.");
+        System.out.println(" Walking: Found shortest pedestrian path from " + start + " to " + end + " utilizing sidewalks and crosswalks.");
     }
 }
 
 class TransitStrategy implements RouteStrategy {
     @Override
     public void buildRoute(String start, String end) {
-        System.out.println("🚌 Transit: Found optimal route from " + start + " to " + end + " aligned with bus and subway timetables.");
+        System.out.println("Transit: Found optimal route from " + start + " to " + end + " aligned with bus and subway timetables.");
     }
 }
 
 class CyclingStrategy implements RouteStrategy {
     @Override
     public void buildRoute(String start, String end) {
-        System.out.println("🚲 Cycling: Found green route from " + start + " to " + end + " prioritizing dedicated bike lanes and avoiding steep hills.");
+        System.out.println(" Cycling: Found green route from " + start + " to " + end + " prioritizing dedicated bike lanes and avoiding steep hills.");
     }
 }
 
