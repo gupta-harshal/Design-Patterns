@@ -73,7 +73,7 @@ public class Main {
 
         // Users subscribe to the channel
         techChannel.registerObserver(alice);
-        techChannel.registerObserver(cbob);
+        techChannel.registerObserver(bob);
 
         // Channel uploads a video -> Notifications fire automatically
         techChannel.uploadVideo("Mastering System Design in 2026");
