@@ -6,6 +6,15 @@ Software engineering is more than just writing code that compiles; it is about w
 
 ---
 
+## Repository Structure
+
+| Folder | Purpose |
+|--------|---------|
+| [`Design-Patterns/`](./Design-Patterns/) | GoF pattern demos — Creational, Structural, Behavioral |
+| [`Low-Level-Design/`](./Low-Level-Design/) | Full system LLDs that compose those patterns (start with [Tic-Tac-Toe](./Low-Level-Design/Tic-Tac-Toe/)) |
+
+---
+
 ##  What are Design Patterns?
 
 Design Patterns are generalized, reusable solutions to commonly occurring problems in software design. They are not finalized pieces of code that can be copied and pasted directly into an application. Instead, they are templates and structural descriptions of how to organize classes, interfaces, and object interactions to achieve maximum flexibility and maintainability.
