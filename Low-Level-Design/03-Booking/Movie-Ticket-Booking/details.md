@@ -341,9 +341,7 @@ sequenceDiagram
 
 ## ⏱️ Seat Lock TTL — the whole discussion
 
-### Why a lock at all?
-
-Between "user clicks A1" and "payment succeeds" there are 30–180 seconds of human latency. Without a hold, two users both see A1 free, both pay, and one of them arrives at a cinema to find a stranger in their seat. With a *permanent* hold, one abandoned tab kills that seat for the night.
+### Why a lock at all → Between "user clicks A1" and "payment succeeds" there are 30–180 seconds of human latency. Without a hold, two users both see A1 free, both pay, and one of them arrives at a cinema to find a stranger in their seat. With a *permanent* hold, one abandoned tab kills that seat for the night.
 
 A **TTL lock** is the compromise: exclusive, but self-healing.
 
@@ -371,7 +369,7 @@ The `synchronized ShowInventory` is correct for a single process only. In a real
 |----------|--------------|-----------|
 | **Redis lock** | `SET show:{id}:seat:{id} bookingId NX PX 300000` — atomic acquire + TTL in one command | Fast; needs care around Redis failover (use Redlock or a single authoritative instance) |
 | **DB row lock** | `SELECT ... FOR UPDATE` on seat rows, ordered by seat id to avoid deadlock | Strong consistency, costs a DB round trip and holds a transaction open |
-| **Optimistic locking** | Each seat row has a `version`; `UPDATE ... WHERE id=? AND version=?`; 0 rows updated ⇒ someone beat you ⇒ retry/fail | No held locks, great under low contention — but a hot show *is* high contention, so expect retry storms |
+| **Optimistic locking** | Each seat row has a `version`; `UPDATE ... WHERE id= → AND version=?`; 0 rows updated ⇒ someone beat you ⇒ retry/fail | No held locks, great under low contention — but a hot show *is* high contention, so expect retry storms |
 | **Partitioned single-writer** | Route all requests for a show to one owning node (consistent hashing / Kafka partition per show) | Removes locking entirely; needs failover and sticky routing |
 
 **Optimistic vs pessimistic, said crisply:** optimistic locking detects a conflict *after the fact* and makes the loser retry; it wins when conflicts are rare. Seat booking for a blockbuster's opening night is the opposite of rare, so a short *pessimistic* hold (which is exactly what the seat lock is) plus a version column as a final backstop is the pragmatic answer. Note the seat lock is doing double duty here: it is both a concurrency primitive **and** a product feature ("your seats are held for 5:00").
@@ -424,7 +422,7 @@ Users double-click "Pay". Give `payAndConfirm` an idempotency key (the `bookingI
 | Waitlist on sold-out shows | Observer on `ShowInventory` release events |
 | Refunds / partial cancel | Move seats out of `bookedBy`; add `RefundPolicy` strategy |
 | Multi-region scale | Swap `ShowInventory` for a Redis/DB-backed implementation behind the same interface |
-| Hold extension ("need more time?") | `extendLock(bookingId, extraMillis)` guarded by a max-extensions counter |
+| Hold extension ("need more time → ") | `extendLock(bookingId, extraMillis)` guarded by a max-extensions counter |
 
 ---
 

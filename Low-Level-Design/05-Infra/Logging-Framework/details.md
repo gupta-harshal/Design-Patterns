@@ -189,7 +189,7 @@ Two thresholds is deliberate and is a common follow-up question:
 | Threshold | Meaning |
 |-----------|---------|
 | Logger level | "Should this event exist at all?" — global cost control |
-| Appender level | "Does *this sink* care?" — console shows everything, file keeps only WARN+ |
+| Appender level | "Does *this sink* care → " — console shows everything, file keeps only WARN+ |
 
 The logger threshold is checked first because it is the cheapest way to drop an event.
 
@@ -289,16 +289,16 @@ sequenceDiagram
     participant F as FileAppender (WARN)
 
     App->>L: debug("entering charge()")
-    L->>L: 10 >= 20 ? no
+    L->>L: 10 >= 20 — no
     L-->>App: return (dropped, no object allocated)
 
     App->>L: warn("unusually large amount")
-    L->>L: 30 >= 20 ? yes
+    L->>L: 30 >= 20 — yes
     L->>R: new LogRecord(WARN, ...)
     L->>C: append(record)
-    C->>C: 30 >= 10 ? yes → format → stdout
+    C->>C: 30 >= 10 — yes → format → stdout
     L->>F: append(record)
-    F->>F: 30 >= 30 ? yes → format → buffer
+    F->>F: 30 >= 30  → yes → format → buffer
 ```
 
 ---

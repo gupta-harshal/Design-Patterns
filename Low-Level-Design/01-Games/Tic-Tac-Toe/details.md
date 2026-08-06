@@ -471,7 +471,7 @@ Move order: `X(0,0) O(0,1) X(0,2) O(1,1) X(1,0) O(1,2) X(2,1) O(2,0) X(2,2)`.
 
 Verify no line is monochrome:
 
-| Line | Contents | Winner? |
+| Line | Contents | Winner → |
 |------|----------|---------|
 | Row 0 | X O X | no |
 | Row 1 | X O O | no |
@@ -491,28 +491,28 @@ Verify no line is monochrome:
 **"Make the win check O(1)."**
 Counter arrays per row/column/diagonal with `+1`/`-1`. State the two-player limitation up front.
 
-**"How do you know the win check is correct for any N?"**
+**"How do you know the win check is correct for any N → "**
 Every winning line must contain the last placed cell — otherwise it was already complete before this move, which contradicts the invariant that the game stops on the first win. So checking the four lines through `(r, c)` is both sound and complete.
 
 **"What if two players could win simultaneously?"**
 Impossible in turn-based play under the same invariant: the game halts on the first completed line, so at most one player can ever have one.
 
-**"Where would you put the rule engine if wins were configurable?"**
+**"Where would you put the rule engine if wins were configurable → "**
 Extract a `WinCondition` interface (`boolean isSatisfied(Board, Move lastMove)`) and hold a list of them on `Game`. `LineWinCondition(k)`, `CornersWinCondition`, and so on. That is Strategy again, applied to rules instead of players.
 
-**"How do you unit test this without stdin?"**
+**"How do you unit test this without stdin → "**
 `ScriptedStrategy`. Feed a fixed move list, assert the returned `GameStatus`. That is exactly why the demo file includes it.
 
-**"Is `Board` thread-safe? Should it be?"**
+**"Is `Board` thread-safe? Should it be → "**
 No, and no. A single game is inherently sequential. If you host many games, give each its own `Board` and confine it to one thread — cheaper and simpler than locking. Only a shared spectator view would need synchronisation, and that is better solved with an immutable snapshot.
 
-**"Why return `false` from `addPiece` instead of throwing?"**
+**"Why return `false` from `addPiece` instead of throwing → "**
 An occupied cell is normal user behaviour, not a programming error. Exceptions for control flow in the hot loop are both slower and noisier. Contrast with `new Board(-1)`, which *is* a programming error and does throw.
 
 **"Scale it to a million concurrent games."**
 The engine is already tiny and stateless between games. The interesting parts move out of LLD: sticky sessions or an actor per game, an event log per game for reconnects, and a board representation compressed to two bitboards (`long` per player for `N ≤ 8`), which also makes the win check a handful of mask comparisons.
 
-**"How would you detect a fork?"**
+**"How would you detect a fork → "**
 Count immediate winning moves available after a candidate move; if a candidate creates two or more distinct winning threats, it is a fork. This is exactly the two-ply lookahead the heuristic bot lacks.
 
 ---

@@ -171,7 +171,7 @@ flowchart TD
 
     P["put(key, value)"] --> PM{"map contains key?"}
     PM -- yes --> PU["node.value = value<br/>moveToFront(node)<br/>NO eviction, size unchanged"]
-    PM -- no --> PF{"size == capacity?"}
+    PM -- no --> PF{"size == capacity → "}
     PF -- yes --> PE["lru = tail.prev<br/>unlink(lru)<br/>map.remove(lru.key)"]
     PF -- no --> PI
     PE --> PI["node = new Node(key,value)<br/>map.put(key,node)<br/>addFirst(node)"]

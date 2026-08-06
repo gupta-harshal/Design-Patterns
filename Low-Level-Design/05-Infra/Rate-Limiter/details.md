@@ -49,7 +49,7 @@ Three responsibilities, kept separate:
 
 Because every algorithm implements the same `RateLimiter` interface, swapping Token Bucket for Sliding Window is a one-line configuration change — that is **Strategy**.
 
-> **The `Clock` seam is the single most important design decision here.** Without it, "does the bucket refill correctly after 1.8 seconds?" can only be tested with `Thread.sleep`, which is slow and flaky. With it, the test is deterministic and instant. `Main.java` uses a `ManualClock` for exactly this reason.
+> **The `Clock` seam is the single most important design decision here.** Without it, "does the bucket refill correctly after 1.8 seconds → " can only be tested with `Thread.sleep`, which is slow and flaky. With it, the test is deterministic and instant. `Main.java` uses a `ManualClock` for exactly this reason.
 
 ---
 
@@ -217,7 +217,7 @@ flowchart TD
     A["allowRequest(clientId)"] --> B["bucket = buckets.computeIfAbsent(clientId)"]
     B --> C["lock bucket"]
     C --> D["refill(): tokens = min(capacity, tokens + elapsedSec * rate)<br/>lastRefill = now"]
-    D --> E{"tokens >= 1 ?"}
+    D --> E{"tokens >= 1  → "}
     E -- yes --> F["tokens -= 1<br/>return ALLOW"]
     E -- no --> G["return DENY<br/>Retry-After = ceil(deficit / rate * 1000)"]
 ```
@@ -341,7 +341,7 @@ javac Main.java && java Main
 
 ## 💡 Interview Talking Points
 
-1. **Clarify first**: per user or per IP? Burst allowed? Single node or distributed? Fail open or closed? These change the answer completely.
+1. **Clarify first**: per user or per IP? Burst allowed? Single node or distributed? Fail open or closed → These change the answer completely.
 2. **Pick Token Bucket and justify it**: two independent knobs — capacity for burst, refill rate for sustained throughput — in constant memory.
 3. **Show the lazy refill formula** and say why there is no timer thread: a million clients would mean a million timers.
 4. **Call out the integer-truncation bug** before being asked; it is the single most common error in this problem.

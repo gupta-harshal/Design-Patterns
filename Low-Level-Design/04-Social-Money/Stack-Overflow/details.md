@@ -1,12 +1,12 @@
-# Stack Overflow (Simplified) ? Low-Level Design
+# Stack Overflow (Simplified) — Low-Level Design
 
 A complete Low-Level Design for a **Q&A forum**: questions, answers, tags, votes, accept-answer, and reputation. Matches the rich rule table in `Main.java` (upvote/downvote deltas, voter costs, privilege gates, reversible reputation).
 
-> **Core insight:** a vote is not `score++`. It is a constrained state change on key `(voterId, targetId)` with **reversible** side effects on author (and sometimes voter) reputation. If reputation is clamped before revert, undo invents or destroys rep ? store raw totals, clamp on read.
+> **Core insight:** a vote is not `score++`. It is a constrained state change on key `(voterId, targetId)` with **reversible** side effects on author (and sometimes voter) reputation. If reputation is clamped before revert, undo invents or destroys rep — store raw totals, clamp on read.
 
 ---
 
-## ?? Problem Statement
+## 📌 Problem Statement
 
 Design a system where users:
 
@@ -20,7 +20,7 @@ Design a system where users:
 
 ---
 
-## ? Requirements
+## ✅ Requirements
 
 ### Functional
 
@@ -34,7 +34,7 @@ Design a system where users:
 ### Non-Functional
 
 * All magic numbers live in one `Reputation` class.
-* Reputation floor (e.g. display min 1) must not break reversibility ? clamp on **read**.
+* Reputation floor (e.g. display min 1) must not break reversibility — clamp on **read**.
 * Deterministic clock for ordering demos.
 
 ### Out of Scope
@@ -43,18 +43,18 @@ Design a system where users:
 
 ---
 
-## ?? Core Design Idea
+## 🧠 Core Design Idea
 
 ### Reputation table (write this on the board)
 
-| Event | Author ? | Voter ? |
+| Event | Author Δ | Voter Δ |
 |-------|----------|---------|
 | Question upvote | +5 | 0 |
-| Question downvote | ?2 | 0 (or configured) |
+| Question downvote | -2 | 0 (or configured) |
 | Answer upvote | +10 | 0 |
-| Answer downvote | ?2 | ?1 (cost to downvote answers) |
-| Answer accepted | +15 author | ? |
-| Asker accepts | +2 asker | ? |
+| Answer downvote | -2 | -1 (cost to downvote answers) |
+| Answer accepted | +15 author | — |
+| Asker accepts | +2 asker | — |
 
 Privilege examples:
 
@@ -69,7 +69,7 @@ Privilege examples:
 votes[(voterId, targetType, targetId)] = UP | DOWN | absent
 ```
 
-Switch UP?DOWN:
+Switch UP → DOWN:
 
 ```text
 revert UP deltas; apply DOWN deltas; store DOWN
@@ -84,18 +84,16 @@ on switch: remove old accept bonuses; apply new
 ```
 
 ### Why raw reputation?
-
 ```text
-raw=1, apply -2 ? raw=-1, display=max(raw,1)=1
-revert +2 ? raw=1  ?
-
+raw=1, apply -2 → raw=-1, display=max(raw,1)=1
+revert +2 → raw=1  ✓
 if you clamped on write to 1 when applying -2:
-  raw stays 1, revert +2 ? raw=3  ? invented reputation
+  raw stays 1, revert +2 → raw=3  → invented reputation
 ```
 
 ---
 
-## ??? Class Diagram
+## 🏗️ Class Diagram
 
 ```mermaid
 classDiagram
@@ -149,7 +147,7 @@ classDiagram
 
 ---
 
-## ?? Responsibilities
+## 🔑 Responsibilities
 
 | Class | Responsibility |
 |-------|----------------|
@@ -158,11 +156,11 @@ classDiagram
 | `Question`/`Answer` | Content + score + links |
 | `ForumService` | Invariants: vote/accept/privileges |
 
-Never sprinkle `+10` in controllers ? interviewers change the table to see if you chase magic numbers.
+Never sprinkle `+10` in controllers — interviewers change the table to see if you chase magic numbers.
 
 ---
 
-## ?? Sequence ? vote + accept
+## 🔄 Sequence — vote + accept
 
 ```mermaid
 sequenceDiagram
@@ -186,7 +184,7 @@ sequenceDiagram
 
 ---
 
-## ?? Algorithms
+## 🧮 Algorithms
 
 ### vote(target, type)
 
@@ -215,7 +213,7 @@ question.accepted=answer
 
 ---
 
-## ?? Edge Cases
+## 🧯 Edge Cases
 
 | Case | Handling |
 |------|----------|
@@ -229,7 +227,7 @@ question.accepted=answer
 
 ---
 
-## ?? Patterns & Principles
+## 🧩 Design Patterns & Principles Used
 
 | Item | Where |
 |------|-------|
@@ -240,7 +238,7 @@ question.accepted=answer
 
 ---
 
-## ?? Extensibility
+## 🔌 Extensibility
 
 | Feature | Approach |
 |---------|----------|
@@ -252,7 +250,7 @@ question.accepted=answer
 
 ---
 
-## ?? Concurrency
+## 🧵 Concurrency
 
 * Vote key insert needs uniqueness constraint / `putIfAbsent`.
 * Score increments under synchronized target or DB atomic update.
@@ -260,9 +258,9 @@ question.accepted=answer
 
 ---
 
-## ?? What the demo proves
+## 🧪 What the Demo Proves
 
-1. Ask ? answer ? upvote changes author rep by +10.  
+1. Ask → answer → upvote changes author rep by +10.  
 2. Accept adds +15/+2 per table.  
 3. Downvote privilege gate works.  
 4. Tag search returns the question.  
@@ -270,7 +268,7 @@ question.accepted=answer
 
 ---
 
-## ?? Interview Talking Points
+## 💡 Interview Talking Points
 
 1. Write the rep table first.  
 2. Vote uniqueness key.  
@@ -283,7 +281,7 @@ question.accepted=answer
 
 ---
 
-## ?? Implementation notes (`Main.java`)
+## 📝 Implementation notes (`Main.java`)
 
 * `Reputation` constants match the table above.
 * `Clock.tick()` monotonic ids/timestamps for stable output.
@@ -292,140 +290,9 @@ question.accepted=answer
 
 ---
 
-## ?? Files
+## 📁 Files
 
 | File | Purpose |
 |------|---------|
 | `details.md` | This LLD |
 | `Main.java` | Full ask/answer/vote/accept/privilege demo |
-
----
-
-## 📚 Extended teaching notes — Stack-Overflow
-
-This section exists so the write-up matches the depth of Parking Lot / Hotel / Splitwise in this bible: more failure modes, more whiteboard scripts, and more “what I would say next.”
-
-### Whiteboard script (8–10 minutes)
-
-1. **Clarify scope (1 min).** Restate functional bullets and say three out-of-scope items aloud.
-2. **Entities (1 min).** List 6–8 nouns; mark which are value objects vs entities.
-3. **Core rule (2 min).** Write the single formula or state diagram that makes the design correct.
-4. **Class diagram (2 min).** Boxes + relationships only for classes you will defend.
-5. **API walk (2 min).** One happy sequence; one failure sequence.
-6. **Close (1–2 min).** Concurrency, complexity, one extension.
-
-### Failure-mode catalog
-
-| # | Failure | Detection | Mitigation |
-|---|---------|-----------|------------|
-| 1 | Partial side effect | Two-phase / plan-then-commit | Compensating action |
-| 2 | Double submit | Idempotency key | Deduplicate |
-| 3 | Lost update | Version / CAS | Retry |
-| 4 | Stale read | TTL / re-read | Accept or refresh |
-| 5 | Resource exhaustion | Explicit null/empty | Backpressure / reject |
-| 6 | Illegal transition | State guard | Throw / message |
-| 7 | Validation gap | Boundary checks | Reject early |
-| 8 | Clock skew | Inject clock | Monotonic / server time |
-
-### Testing matrix
-
-| Layer | What to test | Example |
-|-------|--------------|---------|
-| Unit | Core rule | Overlap truth table / state table / vote math |
-| Unit | Strategy swap | Alternate matching or pricing |
-| Integration | Facade flow | Happy path through service |
-| Adversarial | Illegal calls | Double complete, bad PIN, sold out |
-| Property | Invariants | Spot free XOR occupied; balances sum to zero |
-
-### Complexity cheat sheet
-
-| Operation family | Typical LLD cost | Scale upgrade |
-|------------------|------------------|---------------|
-| Linear scan resources | O(n) | Index / partition |
-| Interval conflict | O(m) per resource | Interval tree |
-| Graph gather | O(F·T) | Push inbox / cache |
-| Tick simulation | O(e) elevators | Event queue |
-
-### Concurrency talking track (memorize)
-
-Shared mutable resource → name it → pick grain of lock (object vs row vs partition) → prefer CAS/check-and-set when races are expected → mention DB unique constraints for multi-node → idempotency for network retries.
-
-### Extension prompts interviewers love
-
-* “Add X without rewriting the orchestrator” → OCP / Strategy / new state.
-* “Two users click at once” → concurrency paragraph.
-* “How do you test?” → deterministic seams (dice, clock, bank).
-* “What did you leave out?” → out-of-scope list, not apology.
-
-### Mapping back to `Main.java`
-
-When you revise, open `Main.java` beside this doc and tick:
-
-- [ ] Every public API in the diagram appears in code
-- [ ] Every demo print maps to a requirement bullet
-- [ ] At least one failure path is executed
-- [ ] Magic numbers are named constants when they encode policy
-
-### Glossary for this module
-
-| Term | Meaning in Stack-Overflow |
-|------|------------------|
-| Facade | Entry service that preserves invariants |
-| Strategy | Swappable policy object |
-| Invariant | Fact that must always hold after a successful call |
-| Soft cancel | Status flip instead of row delete |
-| Plan-then-commit | Validate/plan fully before mutating durable state |
-
-### Mini mock questions (answer in one breath each)
-
-1. What is the single most important invariant?
-2. Where does that invariant live in code?
-3. What is the first class you would add for the next feature?
-4. What breaks first at 100× traffic?
-5. How do you make the demo deterministic?
-
-If you can answer those five without scrolling, you own this design.
-
-### Related modules in this bible
-
-Cross-read for transfer learning: Hotel Booking (intervals), Cab Booking (matching), Vending/ATM (state), LRU/Rate Limiter (infra math), Splitwise (policy tables). Steal structures, not prose.
-
-### Final revision ritual
-
-Cover the class diagram → redraw from memory → compare → run `javac Main.java && java Main` → explain one failure log line as if to an interviewer.
-
-
----
-
-## 🧾 Annotated walkthrough checklist
-
-Use this as a verbal checklist while tracing ``Main.java``:
-
-1. Construction / wiring — which strategies or dependencies are injected?
-2. First mutating call — what invariant is established?
-3. Second call — happy path progress.
-4. Forced failure — confirm rejection leaves prior state intact.
-5. Terminal state — resources freed (spots, drivers, agents, locks, balances)?
-6. Idempotent repeat — second complete/cancel/unpark behavior?
-
-### Design smells to avoid naming in interviews
-
-| Smell | Fix |
-|-------|-----|
-| God service does pricing + matching + persistence | Split ports |
-| Anemic domain + all ifs in one method | State / Strategy |
-| Magic numbers in flow | Policy constants class |
-| boolean flags for lifecycle | Explicit enum + guards |
-| Catching and ignoring errors | Surface domain errors |
-
-### One-page summary you could rewrite from memory
-
-**Problem:** (one sentence)  
-**Core rule:** (one formula / diagram)  
-**Key classes:** (5 names)  
-**Patterns:** (≤3)  
-**Hardest edge case:** (one)  
-**Scale bridge:** (one sentence)
-
-Practice rewriting that six-liner cold before interviews.
-

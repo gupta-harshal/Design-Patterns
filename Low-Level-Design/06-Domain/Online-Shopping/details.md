@@ -337,7 +337,7 @@ sequenceDiagram
 | Partial shipment | Split `Order` into `Shipment` objects, each with its own status |
 | Order events (email, analytics) | Observer on `Order.moveTo` |
 | Multiple warehouses | `Inventory` keyed by `(warehouseId, productId)` + a fulfilment strategy |
-| Concurrency | Optimistic locking on stock rows: `UPDATE stock SET qty=qty-? WHERE qty>=?` |
+| Concurrency | Optimistic locking on stock rows: `UPDATE stock SET qty=qty- → WHERE qty>=?` |
 
 ---
 
@@ -378,9 +378,9 @@ ship                           -> rejected: illegal transition CANCELLED -> SHIP
 
 ## 💡 Interview Talking Points
 
-1. **"When does stock actually move?"** Answer decisively: not on add-to-cart, on confirm — and explain the reservation variant for high-contention items (flash sales).
+1. **"When does stock actually move → "** Answer decisively: not on add-to-cart, on confirm — and explain the reservation variant for high-contention items (flash sales).
 2. **Order of operations in `confirm`.** Validate → charge → decrement → transition. Say why decrementing first leaks inventory on declines.
-3. **Cart vs Order.** Cart is mutable with live prices; Order is an immutable snapshot. This is the question behind "what happens if the price changes at checkout?"
+3. **Cart vs Order.** Cart is mutable with live prices; Order is an immutable snapshot. This is the question behind "what happens if the price changes at checkout → "
 4. **State machine as data.** Show the `EnumMap<OrderStatus, EnumSet<OrderStatus>>` — it beats a nest of `if`s and is trivially testable.
 5. **`BigDecimal`, never `double`.** One line, but interviewers notice.
 6. **Idempotency.** Real gateways can double-callback; mention an idempotency key on `confirm` so a retried payment doesn't decrement stock twice.

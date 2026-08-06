@@ -263,8 +263,7 @@ sequenceDiagram
     participant Clock as TimeProvider
 
     Driver->>Service: park(vehicle)
-    Service->>Service: plate already parked?
-    loop bounded retry
+    Service->>Service: plate already parked → loop bounded retry
         Service->>Strategy: findSpot(lot, vehicle)
         alt no fitting free spot
             Strategy-->>Service: null

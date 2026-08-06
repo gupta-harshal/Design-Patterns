@@ -276,7 +276,7 @@ sequenceDiagram
 
 ```text
 daysLate = ChronoUnit.DAYS.between(dueDate, returnDate)
-fine     = daysLate > 0 ? daysLate * ratePerDay : 0
+fine     = daysLate > 0  → daysLate * ratePerDay : 0
 ```
 
 `ChronoUnit.DAYS.between` returns a **negative** number for early returns, so the `> 0` guard is not optional — without it early returns would produce a negative fine (a credit).
